@@ -1,0 +1,214 @@
+<!doctype html>
+<html>
+
+
+
+
+<head>
+    <meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title> Beatbox</title>
+</head>
+
+<style>
+    button {
+        padding: 5px;
+        background: rgba(27, 147, 216, 0.1);
+        border: 1px solid rgb(122, 122, 122);
+        border-radius: 30px;
+        outline: none;
+        width:120px;
+        height:120px;
+        box-shadow: 0 15px 25px -4px rgba(0, 0, 0, 0.6), inset 0 -8px 25px -1px rgba(255, 255, 255, 0.9), 0 -10px 15px -1px rgba(255, 255, 255, 0.6), inset 0 8px 20px 0 rgba(0, 0, 0, 0.2), inset 0 0 5px 1px rgba(255, 255, 255, 0.6);
+        font-size:15px;
+    }
+    button.active, button:active {
+        background: rgba(48, 195, 251, 0.3);
+        border: 1px solid rgb(0,0,0);
+        box-shadow: 0 15px 25px -4px rgba(0, 0, 0, 10), inset 0 -8px 30px 1px rgba(255, 255, 255, 0.9), 0 -10px 15px -1px rgba(255, 255, 255, 0.6), inset 0 8px 25px 0 rgba(0, 0, 0, 0.4), inset 0 0 10px 1px rgba(255, 255, 255, 0.6);
+        font-size:17px
+    }
+    div#kick{
+        width:130px;
+        height:600px;
+        float:left;
+    }
+    #snare{
+        width:130px;
+        height:600px;
+        float:left;
+    }
+    #hihat{
+        width:130px;
+        height:600px;
+        float:left;
+    }
+    #reverse_cymbal{
+        width:130px;
+        height:600px;
+        float:left;
+    }
+    input.volume {
+        width:120px;
+        height:10px;
+    }
+</style>
+
+<body>
+
+<h1> Homework#1: Beatbox </h1>
+<br>
+<div id = "kick" align = "center">
+    <button id="kickPad" onmousedown="playdrum(0)" > Kick ('a' key)</button>
+    <p id="kickVolLabel"></p>
+    <input class="volume" onchange="changegain(0,this.value)" id="kickVol" title="Kick volume" type="range" min="-24" max ="0" value = "-12">
+</div>
+<div id = "snare" align = "center">
+    <button id="snarePad" onmousedown="playdrum(1)" > Snare ('s' key)</button>
+    <p id="snareVolLabel"></p>
+    <input class="volume" onchange="changegain(1,this.value)" id="snareVol" title="Snare volume" type="range" min="-24" max ="0" value = "-12">
+</div>
+<div id = "hihat" align = "center">
+    <button id="hihatPad" onmousedown="playdrum(2)"> Hihat ('l' key)</button>
+    <p id="hihatVolLabel"></p>
+    <input class="volume" onchange="changegain(2,this.value)" id="hihatVol" title="Hihat volume" type="range" min="-24" max ="0" value = "-12">
+</div>
+<div id = "reverse_cymbal" align = "center">
+    <button id="reverse_cymbalPad" onmousedown="playdrum(3)"> reverse_cymbal ('p' key)</button>
+    <p id="reverse_cymbalVolLabel"></p>
+    <input class="volume" onchange="changegain(3,this.value)" id="reverse_cymbalVol" title="reverse_cymbal volume" type="range" min="-24" max ="0" value = "-12">
+</div>
+
+<script>
+    var context = new (window.AudioContext || window.webkitAudioContext)();
+    var buffers = new Array(4); // 0 : kick, 1 : snare, 2 : hihat, 3 : reverse_cymbal
+    var volume_id = new Array("kickVol","snareVol","hihatVol","reverse_cymbalVol");
+    var volume_label_id = new Array("kickVolLabel","snareVolLabel","hihatVolLabel","reverse_cymbalVolLabel");
+    var gain_nodes = new Array(4);
+    for (i  = 0; i < 4; i++) {
+        gain_nodes[i] = context.createGain();
+        var vol = document.getElementById(volume_id[i]).value;
+        gain_nodes[i].gain.value = db2gain(vol);
+        document.getElementById(volume_label_id[i]).innerHTML = 'Volume:  ' + vol + 'dB'; 
+    }
+    var kick = new XMLHttpRequest();
+    kick.open("Get","kick.wav",true);   //  <---- replace this file with yours
+    kick.responseType = "arraybuffer";
+    kick.onload = function(){
+        context.decodeAudioData(kick.response, function(buffer){buffers[0] = buffer;});
+    }
+    kick.send();
+    var snare = new XMLHttpRequest();
+    snare.open("Get","snare.wav",true);  //  <---- replace this file with yours
+    snare.responseType = "arraybuffer";
+    snare.onload = function(){
+        context.decodeAudioData(snare.response, function(buffer){buffers[1] = buffer;});
+    }
+    snare.send();
+    var hihat = new XMLHttpRequest();
+    hihat.open("Get","hihat.wav",true);  //  <---- replace this file with yours
+    hihat.responseType = "arraybuffer";
+    hihat.onload = function(){
+        context.decodeAudioData(hihat.response, function(buffer){buffers[2] = buffer;});
+    }
+    hihat.send();
+    var reverse_cymbal = new XMLHttpRequest();
+    reverse_cymbal.open("Get","reverse_cymbal.wav",true);  //  <---- replace this file with yours
+    reverse_cymbal.responseType = "arraybuffer";
+    reverse_cymbal.onload = function(){
+        context.decodeAudioData(reverse_cymbal.response, function(buffer){buffers[3] = buffer;});
+    }
+    reverse_cymbal.send();
+    window.onload=function(){
+        window.addEventListener('keydown', function (key) {
+            keyboardDown(key);
+        }, false);
+        window.addEventListener('keyup', function (key) {
+            keyboardUp(key);
+        }, false);
+    }
+    
+    var source = null;
+    
+    function playdrum(i) {
+        //
+        //
+    	source = context.createBufferSource();
+    	source.buffer = buffers[i] ;
+        source.connect(gain_nodes[i]);
+    	gain_nodes[i].connect(context.destination);
+    	source.start(0);
+        //
+        //
+    }
+    function changegain(i,changedvalue){
+        gain_nodes[i].gain.value = db2gain(changedvalue);
+        document.getElementById(volume_label_id[i]).innerHTML = 'Volume:  ' + changedvalue + 'dB' ; 
+    }
+
+    function db2gain(db_gain) {
+        var gain = 1.0 ;
+        //
+        //
+        gain = Math.pow(10, (db_gain)/20 );
+        //
+        //
+        return gain
+    }
+    // keyboard mapping 
+    function keyboardDown(key) {
+        switch (key.keyCode) {
+            case 65: //'a'
+                var kickpad = document.getElementById("kickPad"); 
+                kickpad.className = 'active';
+                simulateClick(kickpad);
+                break;
+            case 83: //'s'
+                var snarepad = document.getElementById("snarePad"); 
+                snarepad.className = 'active';
+                simulateClick(snarepad);
+                break;
+            case 76: //'l'
+                var hihatpad = document.getElementById("hihatPad"); 
+                hihatpad.className = 'active';
+                simulateClick(hihatpad);
+                break;
+            case 80: //'p'
+                var reverse_cymbalpad = document.getElementById("reverse_cymbalPad"); 
+                reverse_cymbalpad.className = 'active';
+                simulateClick(reverse_cymbalpad);
+                break;
+        }
+    }
+    function keyboardUp(key) {
+        switch (key.keyCode) {
+            case 65: //'a'
+                var kickpad = document.getElementById("kickPad"); 
+                kickpad.className = '';
+                break;
+            case 83: //'s'
+                var snarepad = document.getElementById("snarePad"); 
+                snarepad.className = '';
+                break;
+            case 76: //'l'
+                var hihatpad = document.getElementById("hihatPad"); 
+                hihatpad.className = '';
+                break;
+            case 80: //'p'
+                var reverse_cymbalpad = document.getElementById("reverse_cymbalPad"); 
+                reverse_cymbalpad.className = '';
+                break;
+        }
+    }
+    // simulated mousedown on buttons
+    function simulateClick(element) {
+        var event = new MouseEvent("mousedown", {
+            bubbles: true,
+            cancelable: true,
+            view: window
+        });
+        element.dispatchEvent(event);
+    }
+</script>
+</body>
+
+</html>
