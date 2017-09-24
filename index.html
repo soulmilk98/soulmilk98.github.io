@@ -88,31 +88,31 @@
         gain_nodes[i] = context.createGain();
         var vol = document.getElementById(volume_id[i]).value;
         gain_nodes[i].gain.value = db2gain(vol);
-        document.getElementById(volume_label_id[i]).innerHTML = 'Volume:  ' + vol + 'dB'; 
+        document.getElementById(volume_label_id[i]).innerHTML = 'Volume:  ' + vol + 'dB';
     }
     var kick = new XMLHttpRequest();
-    kick.open("Get","kick.wav",true);   //  <---- replace this file with yours
+    kick.open("Get","./kick.wav",true);   //  <---- replace this file with yours
     kick.responseType = "arraybuffer";
     kick.onload = function(){
         context.decodeAudioData(kick.response, function(buffer){buffers[0] = buffer;});
     }
     kick.send();
     var snare = new XMLHttpRequest();
-    snare.open("Get","snare.wav",true);  //  <---- replace this file with yours
+    snare.open("Get","./snare.wav",true);  //  <---- replace this file with yours
     snare.responseType = "arraybuffer";
     snare.onload = function(){
         context.decodeAudioData(snare.response, function(buffer){buffers[1] = buffer;});
     }
     snare.send();
     var hihat = new XMLHttpRequest();
-    hihat.open("Get","hihat.wav",true);  //  <---- replace this file with yours
+    hihat.open("Get","./hihat.wav",true);  //  <---- replace this file with yours
     hihat.responseType = "arraybuffer";
     hihat.onload = function(){
         context.decodeAudioData(hihat.response, function(buffer){buffers[2] = buffer;});
     }
     hihat.send();
     var reverse_cymbal = new XMLHttpRequest();
-    reverse_cymbal.open("Get","reverse_cymbal.wav",true);  //  <---- replace this file with yours
+    reverse_cymbal.open("Get","./reverse_cymbal.wav",true);  //  <---- replace this file with yours
     reverse_cymbal.responseType = "arraybuffer";
     reverse_cymbal.onload = function(){
         context.decodeAudioData(reverse_cymbal.response, function(buffer){buffers[3] = buffer;});
@@ -126,9 +126,9 @@
             keyboardUp(key);
         }, false);
     }
-    
+
     var source = null;
-    
+
     function playdrum(i) {
         //
         //
@@ -142,7 +142,7 @@
     }
     function changegain(i,changedvalue){
         gain_nodes[i].gain.value = db2gain(changedvalue);
-        document.getElementById(volume_label_id[i]).innerHTML = 'Volume:  ' + changedvalue + 'dB' ; 
+        document.getElementById(volume_label_id[i]).innerHTML = 'Volume:  ' + changedvalue + 'dB' ;
     }
 
     function db2gain(db_gain) {
@@ -154,26 +154,26 @@
         //
         return gain
     }
-    // keyboard mapping 
+    // keyboard mapping
     function keyboardDown(key) {
         switch (key.keyCode) {
             case 65: //'a'
-                var kickpad = document.getElementById("kickPad"); 
+                var kickpad = document.getElementById("kickPad");
                 kickpad.className = 'active';
                 simulateClick(kickpad);
                 break;
             case 83: //'s'
-                var snarepad = document.getElementById("snarePad"); 
+                var snarepad = document.getElementById("snarePad");
                 snarepad.className = 'active';
                 simulateClick(snarepad);
                 break;
             case 76: //'l'
-                var hihatpad = document.getElementById("hihatPad"); 
+                var hihatpad = document.getElementById("hihatPad");
                 hihatpad.className = 'active';
                 simulateClick(hihatpad);
                 break;
             case 80: //'p'
-                var reverse_cymbalpad = document.getElementById("reverse_cymbalPad"); 
+                var reverse_cymbalpad = document.getElementById("reverse_cymbalPad");
                 reverse_cymbalpad.className = 'active';
                 simulateClick(reverse_cymbalpad);
                 break;
@@ -182,19 +182,19 @@
     function keyboardUp(key) {
         switch (key.keyCode) {
             case 65: //'a'
-                var kickpad = document.getElementById("kickPad"); 
+                var kickpad = document.getElementById("kickPad");
                 kickpad.className = '';
                 break;
             case 83: //'s'
-                var snarepad = document.getElementById("snarePad"); 
+                var snarepad = document.getElementById("snarePad");
                 snarepad.className = '';
                 break;
             case 76: //'l'
-                var hihatpad = document.getElementById("hihatPad"); 
+                var hihatpad = document.getElementById("hihatPad");
                 hihatpad.className = '';
                 break;
             case 80: //'p'
-                var reverse_cymbalpad = document.getElementById("reverse_cymbalPad"); 
+                var reverse_cymbalpad = document.getElementById("reverse_cymbalPad");
                 reverse_cymbalpad.className = '';
                 break;
         }
