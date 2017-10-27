@@ -26,9 +26,9 @@ var filePlayOn = false;
 var animation_function;
 var animation_id;
 
-var prev_band_level = new Array(10);
+var prev_band_level = new Array(10); 
 for (var i=0; i <10;i++ ) {
-	prev_band_level[i] = 0;
+	prev_band_level[i] = 0;		
 }
 
 
@@ -45,27 +45,27 @@ window.onload=function(){
 
 	var visMod1 = document.getElementById("visMode1");
 	visMod1.addEventListener("click", function(){
-			setAnimationFunction(1)
-	}, false);
+			setAnimationFunction(1)	
+	}, false); 
 
 	var visMod2 = document.getElementById("visMode2");
 	visMod2.addEventListener("click", function(){
-			setAnimationFunction(2)
-	}, false);
+			setAnimationFunction(2)	
+	}, false); 
 
 	vis_view = document.getElementById("loudnessView");
 	vis_value = document.getElementById("loudnessValue");
 	vis_view.width =  WIDTH;
 	vis_view.height = HEIGHT;
 
-
+	
 	// create audio context
 	context = new AudioContext();
-
+	
 	// analyzer
     analyser = context.createAnalyser();
     analyser.fftSize = 2048;
-	analyser.smoothingTimeConstant = 0;
+	analyser.smoothingTimeConstant = 0;		
 
 	var demoReq = new XMLHttpRequest();
     demoReq.open("Get","demo1.mp3",true);
@@ -83,7 +83,7 @@ function setAnimationFunction (mode_num) {
 	    animation_function = draw_octaveband;
 	}
 	else if(mode_num == 2) {
-	    animation_function = draw_MyOwn;
+	    animation_function = draw_MyOwn;		
 	}
 
     if (filePlayOn || micOn) {
@@ -96,7 +96,7 @@ function setAnimationFunction (mode_num) {
 
 function draw_octaveband() {
 
-	// get samples
+	// get samples 
 	var data_array = new Float32Array(analyser.frequencyBinCount);
 	analyser.getFloatFrequencyData(data_array);
 
@@ -108,7 +108,7 @@ function draw_octaveband() {
 
 	// 2d canvas context
 	var drawContext = vis_view.getContext('2d');
-
+	
 	// fill rectangular (for the entire canvas)
 	drawContext.fillStyle = 'rgb(0, 0, 0)';
 	drawContext.fillRect(0, 0, WIDTH, HEIGHT);
@@ -126,7 +126,7 @@ function draw_octaveband() {
 		}
 		else {
 			sound_level_env =  prev_band_level[i];
-			prev_band_level[i] = 0.95*prev_band_level[i];
+			prev_band_level[i] = 0.95*prev_band_level[i]; 
 		}
 
 		// shape
@@ -139,7 +139,7 @@ function draw_octaveband() {
 		var saturation = 255;
 		var value = 255;
 		var rgb = hsvToRgb(hue, saturation, value);
-		drawContext.fillStyle='rgb(' + rgb[0] + ',' + rgb[1] + ',' + rgb[2] + ')';
+		drawContext.fillStyle='rgb(' + rgb[0] + ',' + rgb[1] + ',' + rgb[2] + ')'; 
 		drawContext.fill();
 	}
 
@@ -147,7 +147,7 @@ function draw_octaveband() {
 
 function draw_MyOwn() {
 
-	// get samples
+	// get samples 
 	var data_array = new Float32Array(analyser.frequencyBinCount);
 	analyser.getFloatFrequencyData(data_array);
 
@@ -159,10 +159,10 @@ function draw_MyOwn() {
 
 	// 2d canvas context
 	var drawContext = vis_view.getContext('2d');
-
+	
 	// fill rectangular (for the entire canvas)
 	drawContext.fillStyle = 'rgb(0, 0, 0)';
-	drawContext.fillRect(0, 0, WIDTH*9*Math.random(), HEIGHT);
+	drawContext.fillRect(0, 0, WIDTH, HEIGHT);
 
 	var radius = 0;
 	var start_angle = 0;
@@ -180,7 +180,7 @@ function draw_MyOwn() {
 		}
 		else {
 			sound_level_env =  prev_band_level[i];
-			prev_band_level[i] = 0.95*prev_band_level[i];
+			prev_band_level[i] = 0.95*prev_band_level[i]; 
 		}
 
 		// shape
@@ -197,7 +197,7 @@ function draw_MyOwn() {
 		var saturation = 50;
 		var value = 255;
 		var rgb = hsvToRgb(hue, saturation, value);
-		drawContext.strokeStyle='rgb(' + rgb[0] + ',' + rgb[1] + ',' + rgb[2] + ')';
+		drawContext.strokeStyle='rgb(' + rgb[0] + ',' + rgb[1] + ',' + rgb[2] + ')'; 
 		drawContext.stroke();
 	}
 
@@ -216,11 +216,11 @@ function playMic()
 
 	if (!navigator.getUserMedia)
 		navigator.getUserMedia = (navigator.getUserMedia({audio: true}) || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia);
-
+							  
 	if (!navigator.getUserMedia)
 		alert("Error: getUserMedia not supported!");
-
-	// get audio input streaming
+						
+	// get audio input streaming 				 
 	navigator.getUserMedia({audio: true}, onStream, onStreamError)
 
 	micOn = true;
@@ -233,15 +233,15 @@ function playMic()
 // success callback
 function onStream(stream) {
     mediaSourceNode = context.createMediaStreamSource(stream);
-
+	
 	// Connect graph
 	mediaSourceNode.connect(analyser);
-
+						  
 	// visualize audio animation
     animation_id = setInterval(animation_function, context.sampleRate/analyser.fftSize);
 }
 
-// errorCallback
+// errorCallback			 
 function onStreamError(error) {
 	console.error('Error getting microphone', error);
 
@@ -271,14 +271,14 @@ function playFile() {
     animation_id = setInterval(animation_function, context.sampleRate/analyser.fftSize);
 
 	filePlayOn = true;
-
+	
 	var demoAudio = document.getElementById("demoAudio");
 	demoAudio.innerHTML = 'Demo Audio Stop'
 }
 
 
 function turnOffMicAudio() {
-	var mic = document.getElementById("micInput");
+	var mic = document.getElementById("micInput");		
 	mic.innerHTML = 'Mic On'
 	mediaSourceNode = null;
 	micOn = false;
@@ -296,6 +296,10 @@ function turnOffFileAudio() {
 	stopAnimation();
 }
 
-function stopAnimation() {
+function stopAnimation() { 
     clearInterval(animation_id);
 }
+
+
+
+
