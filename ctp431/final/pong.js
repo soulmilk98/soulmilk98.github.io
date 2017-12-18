@@ -1,9 +1,4 @@
-/*
- * Coffee-Script Pong
- * By rabbitfighter
- * Use Left/Rught buttons to move
- */
-//$(function(){
+
 (CanvasF = function() {
   //theremin
   var AudioContext = window.AudioContext || window.webkitAudioContext;
@@ -198,27 +193,6 @@
       oscillator.frequency.value = (this.x/300) * 2000;
       gainNode.gain.value = (this.y/300) * 1;
 
-/*
-    document.body.addEventListener('mousedown', function(e) {
-      // Mouse has been pressed
-      mousedown = true;
-
-    });
-
-    document.body.addEventListener('mouseup', function() {
-      //Mouse has been released
-      mousedown = false;
-      oscillator.stop(context.currentTime);
-      oscillator.disconnect();
-
-    });
-
-    document.body.addEventListener('mousemove', function(e) {
-      if (mousedown) {
-        oscillator.frequency.setTargetAtTime(calculateFrequency(this.x), context.currentTime, 0.01);
-      }
-    });
-*/
   };
 
     document.body.appendChild(canvas);
@@ -234,4 +208,3 @@
   });
 
 }).call(this);
-//});
